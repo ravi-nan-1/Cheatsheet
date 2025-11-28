@@ -1,135 +1,141 @@
-export type Language = 'en' | 'es';
+export type Language = 'en' | 'es' | 'fr' | 'de' | 'hi' | 'zh';
 
 export const languages: { code: Language; name: string }[] = [
   { code: 'en', name: 'English' },
   { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' },
+  { code: 'de', name: 'Deutsch' },
+  { code: 'hi', name: 'हिन्दी' },
+  { code: 'zh', name: '中文' },
 ];
 
-export const translations = {
-  en: {
-    translation: {
-      main: {
-        title: 'AI Cheat Sheet Generator – Free PDF, URL & Text Summarizer',
-        subtitle: 'Turn any long content into a clean, colorful cheat sheet in seconds. Supports PDF, web URL, text, books, class notes, and coding docs.',
+const enTranslations = {
+  translation: {
+    main: {
+      title: 'AI Cheat Sheet Generator – Free PDF, URL & Text Summarizer',
+      subtitle: 'Turn any long content into a clean, colorful cheat sheet in seconds. Supports PDF, web URL, text, books, class notes, and coding docs.',
+    },
+    creator: {
+      title: 'Create Your Cheat Sheet',
+      description: 'Enter content from text, a website, or a PDF to get started.',
+      tabs: {
+        text: 'Summarize Long Text in One Click',
+        url: 'Summarize Web URL into Notes',
+        pdf: 'Convert PDF to Cheat Sheet Instantly',
       },
-      creator: {
-        title: 'Create Your Cheat Sheet',
-        description: 'Enter content from text, a website, or a PDF to get started.',
-        tabs: {
-          text: 'Summarize Long Text in One Click',
-          url: 'Summarize Web URL into Notes',
-          pdf: 'Convert PDF to Cheat Sheet Instantly',
+      text: {
+        placeholder: 'Paste your long content here...',
+      },
+      pdf: {
+        upload: 'Upload PDF',
+        change: 'Change PDF',
+      },
+      button: {
+        generate: 'Generate Cheat Sheet',
+      },
+    },
+    viewer: {
+      title: 'Generated Cheat Sheet',
+      button: {
+        share: 'Share',
+        download: 'Download',
+      },
+      error: {
+        title: 'Generation Failed',
+      },
+      placeholder: {
+        title: 'Your cheat sheet will appear here',
+        description: 'Just paste your content, click generate, and let our AI work its magic!',
+      },
+    },
+    features: {
+      title: 'AI-Powered Cheat Sheet Templates for Every Subject',
+      cards: {
+        developer: {
+          title: 'Create Developer & Coding Cheat Sheets Automatically',
+          content: 'From React to Python, our AI extracts code snippets, functions, and key concepts to create the perfect developer quick reference.',
         },
-        text: {
-          placeholder: 'Paste your long content here...',
+        canDo: {
+          title: 'What This Tool Can Do',
+          items: [
+            'Convert PDF → Cheat Sheet',
+            'Summarize any Web URL',
+            'Auto-detect subject type (Math, Coding, Medical, Business, Law)',
+            'Apply colorful templates',
+            'Extract formulas, key points, examples',
+            'Developer mode for React & code notes',
+            'Export to PDF',
+            '100% free',
+          ],
         },
-        pdf: {
-          upload: 'Upload PDF',
-          change: 'Change PDF',
+        whoUses: {
+          title: 'Who Uses Summary.all2ools.com?',
+          items: [
+            'Students preparing for exams',
+            'Developers learning React, Python, JS',
+            'Engineers creating formula sheets',
+            'Researchers summarizing long articles',
+            'Bloggers rewriting content',
+            'Readers summarizing books',
+          ],
         },
-        button: {
-          generate: 'Generate Cheat Sheet',
+        whyRank: {
+          title: 'Why Our Cheat Sheets Rank #1',
+          items: [
+            'Accurate & deeply summarized',
+            'Visual, colorful templates',
+            'Easy to print or save',
+            'Handles long PDFs (100+ pages)',
+            'Works on all devices',
+            'Free forever',
+          ],
         },
       },
-      viewer: {
-        title: 'Generated Cheat Sheet',
-        button: {
-          share: 'Share',
-          download: 'Download',
-        },
-        error: {
+    },
+    toast: {
+      inputText: {
+        title: 'Input is empty',
+        description: 'Please paste some text to generate a cheat sheet.',
+      },
+      inputUrl: {
+        title: 'URL is empty',
+        description: 'Please enter a URL to generate a cheat sheet.',
+      },
+      inputPdf: {
+        title: 'No PDF file selected',
+        description: 'Please select a PDF file to generate a cheat sheet.',
+      },
+      success: {
+        title: 'Success!',
+        description: 'Generated a cheat sheet for "{{contentType}}" content.',
+      },
+      generationFailed: {
           title: 'Generation Failed',
-        },
-        placeholder: {
-          title: 'Your cheat sheet will appear here',
-          description: 'Just paste your content, click generate, and let our AI work its magic!',
-        },
       },
-      features: {
-        title: 'AI-Powered Cheat Sheet Templates for Every Subject',
-        cards: {
-          developer: {
-            title: 'Create Developer & Coding Cheat Sheets Automatically',
-            content: 'From React to Python, our AI extracts code snippets, functions, and key concepts to create the perfect developer quick reference.',
-          },
-          canDo: {
-            title: 'What This Tool Can Do',
-            items: [
-              'Convert PDF → Cheat Sheet',
-              'Summarize any Web URL',
-              'Auto-detect subject type (Math, Coding, Medical, Business, Law)',
-              'Apply colorful templates',
-              'Extract formulas, key points, examples',
-              'Developer mode for React & code notes',
-              'Export to PDF',
-              '100% free',
-            ],
-          },
-          whoUses: {
-            title: 'Who Uses Summary.all2ools.com?',
-            items: [
-              'Students preparing for exams',
-              'Developers learning React, Python, JS',
-              'Engineers creating formula sheets',
-              'Researchers summarizing long articles',
-              'Bloggers rewriting content',
-              'Readers summarizing books',
-            ],
-          },
-          whyRank: {
-            title: 'Why Our Cheat Sheets Rank #1',
-            items: [
-              'Accurate & deeply summarized',
-              'Visual, colorful templates',
-              'Easy to print or save',
-              'Handles long PDFs (100+ pages)',
-              'Works on all devices',
-              'Free forever',
-            ],
-          },
-        },
+      download: {
+        title: 'Download Started',
+        description: 'Your cheat sheet is being downloaded.',
       },
-      toast: {
-        inputText: {
-          title: 'Input is empty',
-          description: 'Please paste some text to generate a cheat sheet.',
-        },
-        inputUrl: {
-          title: 'URL is empty',
-          description: 'Please enter a URL to generate a cheat sheet.',
-        },
-        inputPdf: {
-          title: 'No PDF file selected',
-          description: 'Please select a PDF file to generate a cheat sheet.',
-        },
-        success: {
-          title: 'Success!',
-          description: 'Generated a cheat sheet for "{{contentType}}" content.',
-        },
-        generationFailed: {
-            title: 'Generation Failed',
-        },
-        download: {
-          title: 'Download Started',
-          description: 'Your cheat sheet is being downloaded.',
-        },
-        share: {
-          title: 'Copied to clipboard!',
-          description: 'You can now share the cheat sheet text.',
-        },
-        invalidFile: {
-            title: 'Invalid File Type',
-            description: 'Please upload a PDF file.',
-        }
+      share: {
+        title: 'Copied to clipboard!',
+        description: 'You can now share the cheat sheet text.',
       },
-      errors: {
-        noMeaningfulContent: "No meaningful content found to generate a cheat sheet. Please provide relevant text.",
-        generationFailed: 'The AI model failed to generate a cheat sheet for this content. Please try again with different input.',
-        unexpected: 'An unexpected error occurred.',
-        clipboard: 'Failed to copy cheat sheet to clipboard.',
+      invalidFile: {
+          title: 'Invalid File Type',
+          description: 'Please upload a PDF file.',
       }
     },
+    errors: {
+      noMeaningfulContent: "No meaningful content found to generate a cheat sheet. Please provide relevant text.",
+      generationFailed: 'The AI model failed to generate a cheat sheet for this content. Please try again with different input.',
+      unexpected: 'An unexpected error occurred.',
+      clipboard: 'Failed to copy cheat sheet to clipboard.',
+    }
   },
+};
+
+export const translations = {
+  en: enTranslations,
   es: {
     translation: {
       main: {
@@ -254,6 +260,8 @@ export const translations = {
       }
     },
   },
+  fr: enTranslations,
+  de: enTranslations,
+  hi: enTranslations,
+  zh: enTranslations,
 };
-
-    
