@@ -280,11 +280,14 @@ export default function Home() {
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2 text-left text-muted-foreground">
-                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Convert PDF → Cheat Sheet</li>
-                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Summarize any Web URL</li>
-                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Auto-detect subject type</li>
-                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Apply colorful templates</li>
-                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Export to PDF</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Convert PDF → Cheat Sheet</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Summarize any Web URL</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Auto-detect subject type (Math, Coding, Medical, Business, Law)</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Apply colorful templates</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Extract formulas, key points, examples</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Developer mode for React & code notes</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Export to PDF</li>
+                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> 100% free</li>
                       </ul>
                     </CardContent>
                 </Card>
