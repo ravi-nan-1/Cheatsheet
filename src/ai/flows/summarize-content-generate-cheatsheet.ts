@@ -49,7 +49,19 @@ const generateCheatSheetPrompt = ai.definePrompt({
     }),
   },
   output: {schema: z.string()},
-  prompt: `You are an AI specialized in creating subject-aware cheat sheets.\n\nInput:\n1. Raw text: {{{text}}}\n2. Content classification: {{{contentType}}}\n\nTask:\n- Auto-apply the correct template\n- Extract only the most important concepts\n- Keep the cheat sheet very short, visual, and easy to understand\n- Use colored sections, boxes, headers\n- Highlight formulas, code, definitions separately\n- Make everything extremely readable`,
+  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string.
+
+Input:
+1. Raw text: {{{text}}}
+2. Content classification: {{{contentType}}}
+
+Task:
+- Auto-apply the correct template
+- Extract only the most important concepts
+- Keep the cheat sheet very short, visual, and easy to understand
+- Use colored sections, boxes, headers
+- Highlight formulas, code, definitions separately
+- Make everything extremely readable`,
 });
 
 export async function summarizeContentAndGenerateCheatSheet(
@@ -66,16 +78,23 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
   },
   async input => {
     const contentTypeResult = await detectContentTypePrompt(input);
-    const contentType = contentTypeResult.output?.contentType ?? 'general';
+    if (!contentTypeResult.output) {
+      throw new Error('Failed to detect content type.');
+    }
+    const contentType = contentTypeResult.output.contentType;
 
-    const cheatSheetHtml = await generateCheatSheetPrompt({
+    const cheatSheetResult = await generateCheatSheetPrompt({
       text: input.text,
       contentType,
     });
+    
+    if (!cheatSheetResult.output) {
+      throw new Error('Failed to generate cheat sheet.');
+    }
 
     return {
       contentType: contentType,
-      cheatSheetHtml: cheatSheetHtml.output!,
+      cheatSheetHtml: cheatSheetResult.output,
     };
   }
 );
