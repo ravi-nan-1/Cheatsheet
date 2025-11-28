@@ -61,40 +61,44 @@ export default function Home() {
     }
   };
 
-  const handlePrint = () => {
+  const handleDownload = () => {
     if (!cheatSheetRef.current) return;
 
-    const printWindow = window.open('', '', 'height=800,width=800');
-    if (printWindow) {
-      const printContent = cheatSheetRef.current.innerHTML;
-      const pageStyles = `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <title>CheatSheetAI - Print</title>
-            <script src="https://cdn.tailwindcss.com"></script>
-            <style>
-              @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-              @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap');
-              @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap');
-              body { font-family: 'Inter', sans-serif; }
-              .font-headline { font-family: 'Space Grotesk', sans-serif; }
-              .font-code { font-family: 'Source Code Pro', monospace; }
-            </style>
-          </head>
-          <body class="bg-white">
-            <div class="p-4 sm:p-6 md:p-8">${printContent}</div>
-            <script>
-              setTimeout(() => {
-                window.print();
-                window.close();
-              }, 500);
-            </script>
-          </body>
-        </html>`;
-      printWindow.document.write(pageStyles);
-      printWindow.document.close();
-    }
+    const cheatSheetHtml = cheatSheetRef.current.innerHTML;
+    const pageStyles = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <title>CheatSheetAI - Download</title>
+          <script src="https://cdn.tailwindcss.com"><\/script>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;500&display=swap');
+            body { font-family: 'Inter', sans-serif; }
+            .font-headline { font-family: 'Space Grotesk', sans-serif; }
+            .font-code { font-family: 'Source Code Pro', monospace; }
+          </style>
+        </head>
+        <body class="bg-white">
+          <div class="p-4 sm:p-6 md:p-8">${cheatSheetHtml}</div>
+        </body>
+      </html>`;
+    
+    const blob = new Blob([pageStyles], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'cheatsheet.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    toast({
+      title: "Download Started",
+      description: "Your cheat sheet is being downloaded.",
+    });
   };
   
   const handleShare = () => {
@@ -174,7 +178,7 @@ export default function Home() {
               {cheatSheet && (
                 <div className="flex items-center gap-2">
                   <Button variant="outline" size="sm" onClick={handleShare}><Share2 className="mr-2"/>Share</Button>
-                  <Button variant="outline" size="sm" onClick={handlePrint}><Download className="mr-2"/>Download</Button>
+                  <Button variant="outline" size="sm" onClick={handleDownload}><Download className="mr-2"/>Download</Button>
                 </div>
               )}
             </CardHeader>
