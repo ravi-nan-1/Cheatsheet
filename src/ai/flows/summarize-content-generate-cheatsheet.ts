@@ -48,20 +48,24 @@ const generateCheatSheetPrompt = ai.definePrompt({
       contentType: ContentType,
     }),
   },
-  output: {schema: z.string()},
-  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else. If you cannot generate a cheat sheet from the provided text, you MUST return a single HTML div with an error message inside.
+  output: {
+    schema: z.object({
+      cheatSheetHtml: z.string().describe('A valid, non-empty HTML string for the cheat sheet.'),
+    }),
+  },
+  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a JSON object with a single key, "cheatSheetHtml". The value must be a valid, non-empty HTML string. If you cannot generate a cheat sheet from the provided text, you MUST return a JSON object with the "cheatSheetHtml" key containing a single HTML div with an error message inside.
 
 Input:
 1. Raw text: {{{text}}}
 2. Content classification: {{{contentType}}}
 
 Task:
-- Auto-apply the correct template
-- Extract only the most important concepts
-- Keep the cheat sheet very short, visual, and easy to understand
-- Use colored sections, boxes, headers
-- Highlight formulas, code, definitions separately
-- Make everything extremely readable`,
+- Auto-apply the correct template based on the content type.
+- Extract only the most important concepts.
+- Keep the cheat sheet very short, visual, and easy to understand.
+- Use colored sections, boxes, and clear headers.
+- Highlight formulas, code, or definitions separately.
+- Ensure the final output is extremely readable and formatted as JSON.`,
 });
 
 export async function summarizeContentAndGenerateCheatSheet(
@@ -89,11 +93,11 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
         text: input.text,
         contentType,
       });
-      
-      if (!cheatSheetResult.output) {
+
+      if (!cheatSheetResult.output?.cheatSheetHtml) {
         throw new Error('The model returned an empty response for the cheat sheet.');
       }
-      cheatSheetHtml = cheatSheetResult.output;
+      cheatSheetHtml = cheatSheetResult.output.cheatSheetHtml;
 
     } catch (e) {
       console.error(e);
