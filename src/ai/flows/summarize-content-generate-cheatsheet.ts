@@ -36,7 +36,12 @@ export type SummarizeContentAndGenerateCheatSheetOutput = z.infer<typeof Summari
 
 const detectContentTypePrompt = ai.definePrompt({
   name: 'detectContentTypePrompt',
-  input: {schema: z.object({ text: z.string() })},
+  input: {
+    schema: z.object({
+      text: z.string(),
+      targetLanguage: z.string().optional(),
+    }),
+  },
   output: {schema: z.object({contentType: ContentType, reason: z.string()})},
   prompt: `Analyze the text and classify which subject it belongs to. Return only JSON:\n{\n "content_type": "...",\n "reason": "..."\n}\n\nText: {{{text}}}`,
 });
@@ -85,7 +90,7 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     outputSchema: SummarizeContentAndGenerateCheatSheetOutputSchema,
   },
   async input => {
-    const contentTypeResult = await detectContentTypePrompt({ text: input.text });
+    const contentTypeResult = await detectContentTypePrompt(input);
     if (!contentTypeResult.output) {
       throw new Error('Failed to detect content type.');
     }
