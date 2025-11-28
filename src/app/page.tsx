@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useContext } from 'react';
 import { summarizeContentAndGenerateCheatSheet, type SummarizeContentAndGenerateCheatSheetOutput } from '@/ai/flows/summarize-content-generate-cheatsheet';
 import { extractTextFromUrl } from '@/ai/flows/extract-text-from-url';
 import { extractTextFromPdf } from '@/ai/flows/extract-text-from-pdf';
@@ -15,6 +15,9 @@ import { Loader2, Sparkles, AlertCircle, Download, Share2, FileText, Link, Uploa
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from '@/components/icons';
 import { CheatSheetSkeleton } from '@/components/cheat-sheet-skeleton';
+import { LanguageContext } from '@/context/language-context';
+import { LanguageSwitcher } from '@/components/language-switcher';
+
 
 type CheatSheetResult = SummarizeContentAndGenerateCheatSheetOutput | null;
 
@@ -29,6 +32,7 @@ export default function Home() {
   const { toast } = useToast();
   const cheatSheetRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { t } = useContext(LanguageContext);
 
   const handleGenerate = async () => {
     let contentToProcess = '';
@@ -39,14 +43,14 @@ export default function Home() {
     try {
       if (activeTab === 'text') {
         if (!inputText) {
-          toast({ variant: 'destructive', title: 'Input is empty', description: 'Please paste some text to generate a cheat sheet.' });
+          toast({ variant: 'destructive', title: t('toast.inputText.title'), description: t('toast.inputText.description') });
           setIsLoading(false);
           return;
         }
         contentToProcess = inputText;
       } else if (activeTab === 'url') {
         if (!url) {
-          toast({ variant: 'destructive', title: 'URL is empty', description: 'Please enter a URL to generate a cheat sheet.' });
+          toast({ variant: 'destructive', title: t('toast.inputUrl.title'), description: t('toast.inputUrl.description') });
           setIsLoading(false);
           return;
         }
@@ -54,7 +58,7 @@ export default function Home() {
         contentToProcess = urlResult.text;
       } else if (activeTab === 'pdf') {
         if (!pdfFile) {
-          toast({ variant: 'destructive', title: 'No PDF file selected', description: 'Please select a PDF file to generate a cheat sheet.' });
+          toast({ variant: 'destructive', title: t('toast.inputPdf.title'), description: t('toast.inputPdf.description') });
           setIsLoading(false);
           return;
         }
@@ -66,24 +70,24 @@ export default function Home() {
       }
 
       if (!contentToProcess.trim()) {
-        throw new Error("No meaningful content found to generate a cheat sheet. Please provide relevant text.");
+        throw new Error(t('errors.noMeaningfulContent'));
       }
 
       const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
        if (!result || !result.cheatSheetHtml) {
-        throw new Error('The AI model failed to generate a cheat sheet for this content. Please try again with different input.');
+        throw new Error(t('errors.generationFailed'));
       }
       setCheatSheet(result);
       toast({
-        title: "Success!",
-        description: `Generated a cheat sheet for "${result.contentType}" content.`,
+        title: t('toast.success.title'),
+        description: t('toast.success.description', { contentType: result.contentType }),
       });
     } catch (e: any) {
-      const errorMessage = e.message || "An unexpected error occurred.";
+      const errorMessage = e.message || t('errors.unexpected');
       setError(errorMessage);
       toast({
         variant: "destructive",
-        title: "Generation Failed",
+        title: t('toast.generationFailed.title'),
         description: errorMessage,
       });
     } finally {
@@ -126,8 +130,8 @@ export default function Home() {
     URL.revokeObjectURL(url);
 
     toast({
-      title: "Download Started",
-      description: "Your cheat sheet is being downloaded.",
+      title: t('toast.download.title'),
+      description: t('toast.download.description'),
     });
   };
   
@@ -135,14 +139,14 @@ export default function Home() {
     if (!cheatSheetRef.current?.innerText) return;
     navigator.clipboard.writeText(cheatSheetRef.current.innerText).then(() => {
       toast({
-        title: "Copied to clipboard!",
-        description: "You can now share the cheat sheet text.",
+        title: t('toast.share.title'),
+        description: t('toast.share.description'),
       });
     }, () => {
       toast({
         variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-        description: "Failed to copy cheat sheet to clipboard.",
+        title: t('errors.unexpected'),
+        description: t('errors.clipboard'),
       });
     });
   };
@@ -151,7 +155,7 @@ export default function Home() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.type !== 'application/pdf') {
-        toast({ variant: 'destructive', title: 'Invalid File Type', description: 'Please upload a PDF file.' });
+        toast({ variant: 'destructive', title: t('toast.invalidFile.title'), description: t('toast.invalidFile.description') });
         return;
       }
       setPdfFile(file);
@@ -160,35 +164,38 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-background font-body flex flex-col">
-      <header className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b bg-card">
-        <Logo className="h-8 w-8 text-primary" />
-        <h1 className="text-xl font-bold font-headline text-foreground tracking-tighter">
-          CheatSheetAI
-        </h1>
+      <header className="flex items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b bg-card">
+        <div className="flex items-center gap-3">
+          <Logo className="h-8 w-8 text-primary" />
+          <h1 className="text-xl font-bold font-headline text-foreground tracking-tighter">
+            CheatSheetAI
+          </h1>
+        </div>
+        <LanguageSwitcher />
       </header>
       
       <main className="flex-1 p-4 sm:p-6 md:p-8">
         <div className="max-w-7xl mx-auto text-center mb-12">
-            <h1 className="text-3xl md:text-5xl font-bold font-headline tracking-tighter">AI Cheat Sheet Generator – Free PDF, URL & Text Summarizer</h1>
-            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">Turn any long content into a clean, colorful cheat sheet in seconds. Supports PDF, web URL, text, books, class notes, and coding docs.</p>
+            <h1 className="text-3xl md:text-5xl font-bold font-headline tracking-tighter">{t('main.title')}</h1>
+            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">{t('main.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           <Card className="lg:sticky lg:top-8 h-fit">
             <CardHeader>
-              <CardTitle className="font-headline text-2xl">Create Your Cheat Sheet</CardTitle>
-              <CardDescription>Enter content from text, a website, or a PDF to get started.</CardDescription>
+              <CardTitle className="font-headline text-2xl">{t('creator.title')}</CardTitle>
+              <CardDescription>{t('creator.description')}</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="text"><FileText className="mr-2"/>Summarize Long Text in One Click</TabsTrigger>
-                  <TabsTrigger value="url"><Link className="mr-2"/>Summarize Web URL into Notes</TabsTrigger>
-                  <TabsTrigger value="pdf"><Upload className="mr-2"/>Convert PDF to Cheat Sheet Instantly</TabsTrigger>
+                  <TabsTrigger value="text"><FileText className="mr-2"/>{t('creator.tabs.text')}</TabsTrigger>
+                  <TabsTrigger value="url"><Link className="mr-2"/>{t('creator.tabs.url')}</TabsTrigger>
+                  <TabsTrigger value="pdf"><Upload className="mr-2"/>{t('creator.tabs.pdf')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="text" className="mt-4">
                   <Textarea
-                    placeholder="Paste your long content here..."
+                    placeholder={t('creator.text.placeholder')}
                     className="min-h-[250px] text-base resize-y"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
@@ -204,7 +211,7 @@ export default function Home() {
                     <Input type="file" accept=".pdf" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                       <Upload className="mr-2" />
-                      {pdfFile ? 'Change PDF' : 'Upload PDF'}
+                      {pdfFile ? t('creator.pdf.change') : t('creator.pdf.upload')}
                     </Button>
                     {pdfFile && <span className="text-sm text-muted-foreground truncate">{pdfFile.name}</span>}
                   </div>
@@ -214,18 +221,18 @@ export default function Home() {
             <CardFooter>
               <Button onClick={handleGenerate} disabled={isLoading} className="w-full" size="lg">
                 {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                Generate Cheat Sheet
+                {t('creator.button.generate')}
               </Button>
             </CardFooter>
           </Card>
 
           <Card className="min-h-[500px] flex flex-col">
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle className="font-headline text-2xl">Generated Cheat Sheet</CardTitle>
+              <CardTitle className="font-headline text-2xl">{t('viewer.title')}</CardTitle>
               {cheatSheet && (
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={handleShare}><Share2 className="mr-2"/>Share</Button>
-                  <Button variant="outline" size="sm" onClick={handleDownload}><Download className="mr-2"/>Download</Button>
+                  <Button variant="outline" size="sm" onClick={handleShare}><Share2 className="mr-2"/>{t('viewer.button.share')}</Button>
+                  <Button variant="outline" size="sm" onClick={handleDownload}><Download className="mr-2"/>{t('viewer.button.download')}</Button>
                 </div>
               )}
             </CardHeader>
@@ -234,7 +241,7 @@ export default function Home() {
               {error && (
                 <Alert variant="destructive" className="h-full flex flex-col justify-center items-center text-center">
                   <AlertCircle className="h-8 w-8" />
-                  <AlertTitle className="mt-4 text-lg font-bold">Generation Failed</AlertTitle>
+                  <AlertTitle className="mt-4 text-lg font-bold">{t('viewer.error.title')}</AlertTitle>
                   <AlertDescription className="mt-2">{error}</AlertDescription>
                 </Alert>
               )}
@@ -244,8 +251,8 @@ export default function Home() {
               {!isLoading && !error && !cheatSheet && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground p-8 rounded-lg border-2 border-dashed">
                   <Sparkles className="h-16 w-16 mb-4 text-primary/50" />
-                  <h3 className="text-xl font-semibold font-headline">Your cheat sheet will appear here</h3>
-                  <p className="mt-2 max-w-sm">Just paste your content, click generate, and let our AI work its magic!</p>
+                  <h3 className="text-xl font-semibold font-headline">{t('viewer.placeholder.title')}</h3>
+                  <p className="mt-2 max-w-sm">{t('viewer.placeholder.description')}</p>
                 </div>
               )}
             </CardContent>
@@ -253,60 +260,49 @@ export default function Home() {
         </div>
 
         <section className="max-w-7xl mx-auto mt-16 text-center">
-            <h2 className="text-2xl md:text-3xl font-bold font-headline tracking-tighter">AI-Powered Cheat Sheet Templates for Every Subject</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline tracking-tighter">{t('features.title')}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Create Developer & Coding Cheat Sheets Automatically</CardTitle>
+                        <CardTitle className="text-xl font-headline">{t('features.cards.developer.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">From React to Python, our AI extracts code snippets, functions, and key concepts to create the perfect developer quick reference.</p>
+                        <p className="text-muted-foreground">{t('features.cards.developer.content')}</p>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">What This Tool Can Do</CardTitle>
+                        <CardTitle className="text-xl font-headline">{t('features.cards.canDo.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <ul className="space-y-2 text-left text-muted-foreground">
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Convert PDF → Cheat Sheet</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Summarize any Web URL</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Auto-detect subject type (Math, Coding, Medical, Business, Law)</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Apply colorful templates</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Extract formulas, key points, examples</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Developer mode for React & code notes</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Export to PDF</li>
-                        <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> 100% free</li>
+                        {t('features.cards.canDo.items', { returnObjects: true }).map((item: string, index: number) => (
+                          <li key={index} className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> {item}</li>
+                        ))}
                       </ul>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Who Uses Summary.all2ools.com?</CardTitle>
+                        <CardTitle className="text-xl font-headline">{t('features.cards.whoUses.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ul className="space-y-2 text-left text-muted-foreground">
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Students preparing for exams</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Developers learning React, Python, JS</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Engineers creating formula sheets</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Researchers summarizing long articles</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Bloggers rewriting content</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Readers summarizing books</li>
+                            {t('features.cards.whoUses.items', { returnObjects: true }).map((item: string, index: number) => (
+                              <li key={index} className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> {item}</li>
+                            ))}
                         </ul>
                     </CardContent>
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Why Our Cheat Sheets Rank #1</CardTitle>
+                        <CardTitle className="text-xl font-headline">{t('features.cards.whyRank.title')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <ul className="space-y-2 text-left text-muted-foreground">
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Accurate & deeply summarized</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Visual, colorful templates</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Easy to print or save</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Handles long PDFs (100+ pages)</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Works on all devices</li>
-                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Free forever</li>
+                            {t('features.cards.whyRank.items', { returnObjects: true }).map((item: string, index: number) => (
+                              <li key={index} className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> {item}</li>
+                            ))}
                         </ul>
                     </CardContent>
                 </Card>
@@ -317,3 +313,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
