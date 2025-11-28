@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, AlertCircle, Download, Share2, FileText, Link, Upload } from "lucide-react";
+import { Loader2, Sparkles, AlertCircle, Download, Share2, FileText, Link, Upload, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from '@/components/icons';
 import { CheatSheetSkeleton } from '@/components/cheat-sheet-skeleton';
@@ -73,6 +73,9 @@ export default function Home() {
       }
 
       const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
+       if (!result || !result.cheatSheetHtml) {
+        throw new Error('Unable to generate a meaningful cheat sheet. The provided text does not contain sufficient or relevant information.');
+      }
       setCheatSheet(result);
       toast({
         title: "Success!",
@@ -162,12 +165,17 @@ export default function Home() {
     <div className="min-h-screen bg-background font-body flex flex-col">
       <header className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b bg-card">
         <Logo className="h-8 w-8 text-primary" />
-        <h1 className="text-2xl font-bold font-headline text-foreground tracking-tighter">
+        <h1 className="text-xl font-bold font-headline text-foreground tracking-tighter">
           CheatSheetAI
         </h1>
       </header>
       
       <main className="flex-1 p-4 sm:p-6 md:p-8">
+        <div className="max-w-7xl mx-auto text-center mb-12">
+            <h1 className="text-3xl md:text-5xl font-bold font-headline tracking-tighter">AI Cheat Sheet Generator – Free PDF, URL & Text Summarizer</h1>
+            <p className="mt-4 text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">Turn any long content into a clean, colorful cheat sheet in seconds. Supports PDF, web URL, text, books, class notes, and coding docs.</p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
           <Card className="lg:sticky lg:top-8 h-fit">
             <CardHeader>
@@ -177,9 +185,9 @@ export default function Home() {
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="text"><FileText className="mr-2"/>Text</TabsTrigger>
-                  <TabsTrigger value="url"><Link className="mr-2"/>URL</TabsTrigger>
-                  <TabsTrigger value="pdf"><Upload className="mr-2"/>PDF</TabsTrigger>
+                  <TabsTrigger value="text"><FileText className="mr-2"/>Summarize Long Text in One Click</TabsTrigger>
+                  <TabsTrigger value="url"><Link className="mr-2"/>Summarize Web URL into Notes</TabsTrigger>
+                  <TabsTrigger value="pdf"><Upload className="mr-2"/>Convert PDF to Cheat Sheet Instantly</TabsTrigger>
                 </TabsList>
                 <TabsContent value="text" className="mt-4">
                   <Textarea
@@ -246,6 +254,43 @@ export default function Home() {
             </CardContent>
           </Card>
         </div>
+
+        <section className="max-w-7xl mx-auto mt-16 text-center">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline tracking-tighter">AI-Powered Cheat Sheet Templates for Every Subject</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl font-headline">Create Developer & Coding Cheat Sheets Automatically</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">From React to Python, our AI extracts code snippets, functions, and key concepts to create the perfect developer quick reference.</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl font-headline">Why Students Love Summary.all2ools.com</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground">Turn long textbooks and lecture notes into easy-to-digest summaries. Perfect for exam prep and quick revision.</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-xl font-headline">What This Tool Can Do</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <ul className="space-y-2 text-left text-muted-foreground">
+                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Convert PDF → Cheat Sheet</li>
+                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Summarize any Web URL</li>
+                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Auto-detect subject type</li>
+                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Apply colorful templates</li>
+                        <li className="flex items-center"><CheckCircle className="mr-2 text-green-500" /> Export to PDF</li>
+                      </ul>
+                    </CardContent>
+                </Card>
+            </div>
+        </section>
+
       </main>
     </div>
   );
