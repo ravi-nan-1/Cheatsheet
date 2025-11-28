@@ -46,14 +46,24 @@ const extractTextFromPdfFlow = ai.defineFlow(
       let text = data.text;
       text = text.replace(/\s\s+/g, ' ').replace(/\n\s*\n/g, '\n').trim();
 
+      if (!text) {
+        throw new Error('Could not extract any text from the PDF. The file might be image-based or empty.');
+      }
+
       return { text };
     } catch (error: any) {
       console.error('Error parsing PDF:', error);
       // Provide a more specific error message if possible
-      const message = error.message.includes('Invalid PDF') 
-        ? 'The provided file does not appear to be a valid PDF.'
-        : 'Failed to parse the PDF file.';
+      let message = 'Failed to process the PDF file.';
+      if (error.message.includes('Invalid PDF')) {
+        message = 'The provided file does not appear to be a valid PDF.';
+      } else if (error.message.includes('image-based')) {
+        message = error.message;
+      }
+      
       throw new Error(message);
     }
   }
 );
+
+    
