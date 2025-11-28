@@ -49,7 +49,7 @@ const generateCheatSheetPrompt = ai.definePrompt({
     }),
   },
   output: {schema: z.string()},
-  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string.
+  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else. Do not return null or an empty string under any circumstance.
 
 Input:
 1. Raw text: {{{text}}}
@@ -89,7 +89,8 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     });
     
     if (!cheatSheetResult.output) {
-      throw new Error('Failed to generate cheat sheet.');
+      // Even with the stronger prompt, have a fallback.
+      throw new Error('Failed to generate cheat sheet. The model returned an empty response.');
     }
 
     return {
