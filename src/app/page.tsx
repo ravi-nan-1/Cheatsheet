@@ -188,10 +188,19 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="text"><FileText className="mr-2"/>{t('creator.tabs.text')}</TabsTrigger>
-                  <TabsTrigger value="url"><Link className="mr-2"/>{t('creator.tabs.url')}</TabsTrigger>
-                  <TabsTrigger value="pdf"><Upload className="mr-2"/>{t('creator.tabs.pdf')}</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-1 md:grid-cols-3 h-auto md:h-10">
+                  <TabsTrigger value="text" className="flex-col md:flex-row h-auto py-2 md:py-1.5">
+                    <FileText className="mb-1 md:mb-0 md:mr-2"/>
+                    <span>{t('creator.tabs.text')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="url" className="flex-col md:flex-row h-auto py-2 md:py-1.5">
+                    <Link className="mb-1 md:mb-0 md:mr-2"/>
+                    <span>{t('creator.tabs.url')}</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="pdf" className="flex-col md:flex-row h-auto py-2 md:py-1.5">
+                    <Upload className="mb-1 md:mb-0 md:mr-2"/>
+                    <span>{t('creator.tabs.pdf')}</span>
+                  </TabsTrigger>
                 </TabsList>
                 <TabsContent value="text" className="mt-4">
                   <Textarea
@@ -313,5 +322,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

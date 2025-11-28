@@ -20,9 +20,9 @@ const enTranslations = {
       title: 'Create Your Cheat Sheet',
       description: 'Enter content from text, a website, or a PDF to get started.',
       tabs: {
-        text: 'Summarize Long Text in One Click',
-        url: 'Summarize Web URL into Notes',
-        pdf: 'Convert PDF to Cheat Sheet Instantly',
+        text: 'Text',
+        url: 'URL',
+        pdf: 'PDF',
       },
       text: {
         placeholder: 'Paste your long content here...',
@@ -70,7 +70,7 @@ const enTranslations = {
           ],
         },
         whoUses: {
-          title: 'Who Uses Summary.all2ools.com?',
+          title: 'Who Uses This Tool?',
           items: [
             'Students preparing for exams',
             'Developers learning React, Python, JS',
@@ -145,9 +145,9 @@ const esTranslations = {
         title: 'Crea tu Hoja de Trucos',
         description: 'Ingresa contenido desde texto, un sitio web o un PDF para comenzar.',
         tabs: {
-          text: 'Resume Texto Largo con Un Clic',
-          url: 'Resume URL Web en Notas',
-          pdf: 'Convierte PDF a Hoja de Trucos al Instante',
+          text: 'Texto',
+          url: 'URL',
+          pdf: 'PDF',
         },
         text: {
           placeholder: 'Pega tu contenido largo aquí...',
@@ -195,7 +195,7 @@ const esTranslations = {
             ],
           },
           whoUses: {
-            title: '¿Quién Usa Summary.all2ools.com?',
+            title: '¿Quién Usa Esta Herramienta?',
             items: [
               'Estudiantes preparándose para exámenes',
               'Desarrolladores aprendiendo React, Python, JS',
@@ -253,7 +253,7 @@ const esTranslations = {
       },
       errors: {
         noMeaningfulContent: "No se encontró contenido significativo para generar una hoja de trucos. Por favor, proporciona texto relevante.",
-        generationFailed: 'El modelo de IA no pudo generar una hoja de trucos para este contenido. Por favor, inténtalo de nuevo con una entrada diferente.',
+        generationFailed: 'El modelo de IA no pudo generar una hoja de trucros para este contenido. Por favor, inténtalo de nuevo con una entrada diferente.',
         unexpected: 'Ocurrió un error inesperado.',
         clipboard: 'No se pudo copiar la hoja de trucos al portapapeles.',
       }
@@ -270,9 +270,9 @@ const frTranslations = {
       title: 'Créez votre fiche de révision',
       description: 'Entrez du contenu à partir d\'un texte, d\'un site Web ou d\'un PDF pour commencer.',
       tabs: {
-        text: 'Résumez un long texte en un clic',
-        url: 'Résumez une URL Web en notes',
-        pdf: 'Convertissez un PDF en fiche de révision instantanément',
+        text: 'Texte',
+        url: 'URL',
+        pdf: 'PDF',
       },
       text: {
         placeholder: 'Collez votre long contenu ici...',
@@ -320,7 +320,7 @@ const frTranslations = {
           ],
         },
         whoUses: {
-          title: 'Qui utilise Summary.all2ools.com ?',
+          title: 'Qui utilise cet outil ?',
           items: [
             'Étudiants se préparant aux examens',
             'Développeurs apprenant React, Python, JS',
@@ -395,9 +395,9 @@ const deTranslations = {
       title: 'Erstellen Sie Ihren Spickzettel',
       description: 'Geben Sie Inhalt aus Text, einer Website oder einem PDF ein, um zu beginnen.',
       tabs: {
-        text: 'Langen Text mit einem Klick zusammenfassen',
-        url: 'Web-URL in Notizen zusammenfassen',
-        pdf: 'PDF sofort in Spickzettel umwandeln',
+        text: 'Text',
+        url: 'URL',
+        pdf: 'PDF',
       },
       text: {
         placeholder: 'Fügen Sie Ihren langen Inhalt hier ein...',
@@ -445,7 +445,7 @@ const deTranslations = {
           ],
         },
         whoUses: {
-          title: 'Wer nutzt Summary.all2ools.com?',
+          title: 'Wer nutzt dieses Tool?',
           items: [
             'Studenten, die sich auf Prüfungen vorbereiten',
             'Entwickler, die React, Python, JS lernen',
@@ -520,9 +520,9 @@ const hiTranslations = {
       title: 'अपनी चीट शीट बनाएं',
       description: 'शुरू करने के लिए टेक्स्ट, वेबसाइट या पीडीएफ से कंटेंट दर्ज करें।',
       tabs: {
-        text: 'एक क्लिक में लंबे टेक्स्ट का सारांश बनाएं',
-        url: 'वेब यूआरएल को नोट्स में सारांशित करें',
-        pdf: 'पीडीएफ को तुरंत चीट शीट में बदलें',
+        text: 'टेक्स्ट',
+        url: 'यूआरएल',
+        pdf: 'पीडीएफ',
       },
       text: {
         placeholder: 'अपना लंबा कंटेंट यहां पेस्ट करें...',
@@ -570,7 +570,7 @@ const hiTranslations = {
           ],
         },
         whoUses: {
-          title: 'Summary.all2ools.com का उपयोग कौन करता है?',
+          title: 'इस टूल का उपयोग कौन करता है?',
           items: [
             'परीक्षा की तैयारी कर रहे छात्र',
             'रिएक्ट, पायथन, जेएस सीख रहे डेवलपर्स',
@@ -581,7 +581,7 @@ const hiTranslations = {
           ],
         },
         whyRank: {
-          title: 'हमारी चीट शीट्स #1 क्यों हैं',
+          title: 'हमारी चीટ शीट्स #1 क्यों हैं',
           items: [
             'सटीक और गहरा सारांश',
             'दृश्य, रंगीन टेम्पलेट्स',
@@ -645,9 +645,9 @@ const zhTranslations = {
       title: '创建您的备忘单',
       description: '从文本、网站或 PDF 输入内容以开始。',
       tabs: {
-        text: '一键总结长文本',
-        url: '将网页 URL 总结为笔记',
-        pdf: '立即将 PDF 转换为备忘单',
+        text: '文本',
+        url: '网址',
+        pdf: 'PDF',
       },
       text: {
         placeholder: '在此处粘贴您的长内容...',
@@ -695,7 +695,7 @@ const zhTranslations = {
           ],
         },
         whoUses: {
-          title: '谁在使用 Summary.all2ools.com？',
+          title: '谁在使用此工具？',
           items: [
             '准备考试的学生',
             '学习 React、Python、JS 的开发人员',
