@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'AI Cheat Sheet Generator | Free PDF, URL & Text Summarizer | Summary Maker',
@@ -39,8 +40,17 @@ export default function RootLayout({
           `}
         </script>
       </head>
-      <body className="font-body antialiased">
-        {children}
+      <body className="font-body antialiased flex flex-col min-h-screen">
+        <div className="flex-1">
+          {children}
+        </div>
+        <footer className="bg-card border-t py-6 px-4 sm:px-6">
+          <div className="max-w-7xl mx-auto flex justify-center items-center text-sm text-muted-foreground">
+              <Link href="/blog" className="hover:text-primary transition-colors">
+                Blog
+              </Link>
+          </div>
+        </footer>
         <Toaster />
       </body>
     </html>
