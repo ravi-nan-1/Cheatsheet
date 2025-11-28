@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Block admin or internal directories (if any)
+Disallow: /admin/
+Disallow: /internal/
+Disallow: /api/secure/
+
+# Sitemap location
+Sitemap: https://summary.all2ools.com/sitemap.xml
