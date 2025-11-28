@@ -48,8 +48,8 @@ const generateCheatSheetPrompt = ai.definePrompt({
       contentType: ContentType,
     }),
   },
-  output: {schema: z.string().nullable()},
-  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else.
+  output: {schema: z.string()},
+  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else. If you cannot generate a cheat sheet from the provided text, you MUST return a single HTML div with an error message inside.
 
 Input:
 1. Raw text: {{{text}}}
