@@ -27,7 +27,9 @@ export default function Home() {
   const [inputText, setInputText] = useState('');
   const [url, setUrl] = useState('');
   const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfPageCount, setPdfPageCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [cheatSheet, setCheatSheet] = useState<CheatSheetResult>(null);
   const { toast } = useToast();
@@ -41,7 +43,9 @@ export default function Home() {
     let contentToProcess = '';
     setError(null);
     setCheatSheet(null);
+    setPdfPageCount(null);
     setIsLoading(true);
+    setLoadingMessage(t('creator.loading.default'));
 
     try {
       if (activeTab === 'text') {
@@ -57,6 +61,7 @@ export default function Home() {
           setIsLoading(false);
           return;
         }
+        setLoadingMessage(t('creator.loading.scraping'));
         const urlResult = await extractTextFromUrl({ url });
         contentToProcess = urlResult.text;
       } else if (activeTab === 'pdf') {
@@ -65,11 +70,14 @@ export default function Home() {
           setIsLoading(false);
           return;
         }
+        setLoadingMessage(t('creator.loading.readingPdf'));
         const fileBuffer = await pdfFile.arrayBuffer();
         const base64Pdf = Buffer.from(fileBuffer).toString('base64');
         const pdfDataUri = `data:application/pdf;base64,${base64Pdf}`;
         const pdfResult = await extractTextFromPdf({ pdf: pdfDataUri });
         contentToProcess = pdfResult.text;
+        setPdfPageCount(pdfResult.numPages);
+        setLoadingMessage(t('creator.loading.summarizingPdf', { count: pdfResult.numPages }));
       }
 
       if (!contentToProcess.trim()) {
@@ -97,6 +105,7 @@ export default function Home() {
       });
     } finally {
       setIsLoading(false);
+      setLoadingMessage('');
     }
   };
 
@@ -164,6 +173,7 @@ export default function Home() {
         return;
       }
       setPdfFile(file);
+      setPdfPageCount(null); // Reset page count on new file
     }
   };
 
@@ -221,13 +231,13 @@ export default function Home() {
                   </div>
                 </TabsContent>
                 <TabsContent value="pdf" className="mt-4 space-y-2">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-col items-start space-y-2">
                     <Input type="file" accept=".pdf" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
                     <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
                       <Upload className="mr-2" />
                       {pdfFile ? t('creator.pdf.change') : t('creator.pdf.upload')}
                     </Button>
-                    {pdfFile && <span className="text-sm text-muted-foreground truncate">{pdfFile.name}</span>}
+                    {pdfFile && <span className="text-sm text-muted-foreground truncate">{t('creator.pdf.selected', {fileName: pdfFile.name})}</span>}
                   </div>
                 </TabsContent>
               </Tabs>
@@ -250,7 +260,7 @@ export default function Home() {
             <CardFooter>
               <Button onClick={handleGenerate} disabled={isLoading} className="w-full" size="lg">
                 {isLoading ? <Loader2 className="animate-spin" /> : <Sparkles className="mr-2" />}
-                {t('creator.button.generate')}
+                {isLoading ? loadingMessage : t('creator.button.generate')}
               </Button>
             </CardFooter>
           </Card>

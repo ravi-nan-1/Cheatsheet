@@ -18,6 +18,7 @@ export type ExtractTextFromPdfInput = z.infer<typeof ExtractTextFromPdfInputSche
 
 const ExtractTextFromPdfOutputSchema = z.object({
   text: z.string().describe('The extracted text from the PDF.'),
+  numPages: z.number().describe('The total number of pages in the PDF.'),
 });
 export type ExtractTextFromPdfOutput = z.infer<typeof ExtractTextFromPdfOutputSchema>;
 
@@ -49,6 +50,6 @@ const extractTextFromPdfFlow = ai.defineFlow(
       throw new Error('Could not extract any text from the PDF. The file might be image-based or empty.');
     }
 
-    return { text };
+    return { text, numPages: data.numpages };
   }
 );

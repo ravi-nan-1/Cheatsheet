@@ -30,6 +30,7 @@ const enTranslations = {
       pdf: {
         upload: 'Upload PDF',
         change: 'Change PDF',
+        selected: 'Selected: {{fileName}}',
       },
       button: {
         generate: 'Generate Cheat Sheet',
@@ -37,6 +38,12 @@ const enTranslations = {
       language: {
         label: 'Cheat Sheet Language',
         placeholder: 'Select a language',
+      },
+      loading: {
+        default: 'Generating...',
+        readingPdf: 'Reading PDF...',
+        scraping: 'Scraping URL...',
+        summarizingPdf: 'Summarizing {{count}} pages...',
       }
     },
     viewer: {
@@ -159,6 +166,7 @@ const esTranslations = {
         pdf: {
           upload: 'Subir PDF',
           change: 'Cambiar PDF',
+          selected: 'Seleccionado: {{fileName}}',
         },
         button: {
           generate: 'Generar Hoja de Trucos',
@@ -166,6 +174,12 @@ const esTranslations = {
         language: {
           label: 'Idioma de la Hoja de Trucos',
           placeholder: 'Selecciona un idioma',
+        },
+        loading: {
+            default: 'Generando...',
+            readingPdf: 'Leyendo PDF...',
+            scraping: 'Extrayendo URL...',
+            summarizingPdf: 'Resumiendo {{count}} páginas...',
         }
       },
       viewer: {
@@ -288,6 +302,7 @@ const frTranslations = {
       pdf: {
         upload: 'Télécharger un PDF',
         change: 'Changer de PDF',
+        selected: 'Sélectionné: {{fileName}}',
       },
       button: {
         generate: 'Générer une fiche de révision',
@@ -295,6 +310,12 @@ const frTranslations = {
       language: {
         label: 'Langue de la fiche de révision',
         placeholder: 'Sélectionnez une langue',
+      },
+      loading: {
+        default: 'Génération en cours...',
+        readingPdf: 'Lecture du PDF...',
+        scraping: 'Extraction de l\'URL...',
+        summarizingPdf: 'Résumé de {{count}} pages...',
       }
     },
     viewer: {
@@ -417,6 +438,7 @@ const deTranslations = {
       pdf: {
         upload: 'PDF hochladen',
         change: 'PDF ändern',
+        selected: 'Ausgewählt: {{fileName}}',
       },
       button: {
         generate: 'Spickzettel generieren',
@@ -424,6 +446,12 @@ const deTranslations = {
       language: {
         label: 'Spickzettel-Sprache',
         placeholder: 'Wählen Sie eine Sprache',
+      },
+      loading: {
+        default: 'Generiere...',
+        readingPdf: 'Lese PDF...',
+        scraping: 'Scrape URL...',
+        summarizingPdf: 'Fasse {{count}} Seiten zusammen...',
       }
     },
     viewer: {
@@ -546,6 +574,7 @@ const hiTranslations = {
       pdf: {
         upload: 'पीडीएफ अपलोड करें',
         change: 'पीडीएफ बदलें',
+        selected: 'चयनित: {{fileName}}',
       },
       button: {
         generate: 'चीट शीट जेनरेट करें',
@@ -553,6 +582,12 @@ const hiTranslations = {
       language: {
         label: 'चीट शीट भाषा',
         placeholder: 'एक भाषा चुनें',
+      },
+      loading: {
+        default: 'उत्पन्न हो रहा है...',
+        readingPdf: 'पीडीएफ पढ़ रहा है...',
+        scraping: 'यूआरएल स्क्रैप कर रहा है...',
+        summarizingPdf: '{{count}} पृष्ठों का सारांश बना रहा है...',
       }
     },
     viewer: {
@@ -675,6 +710,7 @@ const zhTranslations = {
       pdf: {
         upload: '上传 PDF',
         change: '更改 PDF',
+        selected: '已选择: {{fileName}}',
       },
       button: {
         generate: '生成备忘单',
@@ -682,6 +718,12 @@ const zhTranslations = {
       language: {
         label: '备忘单语言',
         placeholder: '选择一种语言',
+      },
+      loading: {
+        default: '正在生成...',
+        readingPdf: '正在阅读PDF...',
+        scraping: '正在抓取URL...',
+        summarizingPdf: '正在总结 {{count}} 页...',
       }
     },
     viewer: {
@@ -789,6 +831,6 @@ export const translations = {
   es: esTranslations,
   fr: frTranslations,
   de: deTranslations,
-  hi: hiTranslations,
+hi: hiTranslations,
   zh: zhTranslations,
 };
