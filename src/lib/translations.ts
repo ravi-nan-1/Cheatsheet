@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'es' | 'fr' | 'de' | 'hi' | 'zh';
 
 export const languages: { code: Language; name: string }[] = [
@@ -134,9 +135,7 @@ const enTranslations = {
   },
 };
 
-export const translations = {
-  en: enTranslations,
-  es: {
+const esTranslations = {
     translation: {
       main: {
         title: 'Generador de Hojas de Trucos con IA – Resumidor Gratuito de PDF, URL y Texto',
@@ -259,9 +258,13 @@ export const translations = {
         clipboard: 'No se pudo copiar la hoja de trucos al portapapeles.',
       }
     },
-  },
-  fr: enTranslations,
-  de: enTranslations,
-  hi: enTranslations,
-  zh: enTranslations,
+  };
+
+export const translations = {
+  en: enTranslations,
+  es: esTranslations,
+  fr: enTranslations, // Placeholder
+  de: enTranslations, // Placeholder
+  hi: enTranslations, // Placeholder
+  zh: enTranslations, // Placeholder
 };
