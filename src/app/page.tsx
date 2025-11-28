@@ -65,9 +65,6 @@ export default function Home() {
         const base64Pdf = Buffer.from(fileBuffer).toString('base64');
         const pdfDataUri = `data:application/pdf;base64,${base64Pdf}`;
         const pdfResult = await extractTextFromPdf({ pdf: pdfDataUri });
-        if (!pdfResult.text) {
-          throw new Error("Could not extract text from the PDF.");
-        }
         contentToProcess = pdfResult.text;
       }
 
@@ -253,5 +250,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
