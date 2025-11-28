@@ -51,9 +51,6 @@ export default function Home() {
           return;
         }
         const urlResult = await extractTextFromUrl({ url });
-        if (!urlResult.text) {
-          throw new Error("Could not extract text from the URL. The page might be empty or protected.");
-        }
         contentToProcess = urlResult.text;
       } else if (activeTab === 'pdf') {
         if (!pdfFile) {
@@ -74,7 +71,7 @@ export default function Home() {
 
       const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
        if (!result || !result.cheatSheetHtml) {
-        throw new Error('Unable to generate a meaningful cheat sheet. The provided text does not contain sufficient or relevant information.');
+        throw new Error('The AI model failed to generate a cheat sheet for this content. Please try again with different input.');
       }
       setCheatSheet(result);
       toast({
@@ -268,10 +265,17 @@ export default function Home() {
                 </Card>
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-xl font-headline">Why Students Love Summary.all2ools.com</CardTitle>
+                        <CardTitle className="text-xl font-headline">Who Uses Summary.all2ools.com?</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <p className="text-muted-foreground">Turn long textbooks and lecture notes into easy-to-digest summaries. Perfect for exam prep and quick revision.</p>
+                        <ul className="space-y-2 text-left text-muted-foreground">
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Students preparing for exams</li>
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Developers learning React, Python, JS</li>
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Engineers creating formula sheets</li>
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Researchers summarizing long articles</li>
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Bloggers rewriting content</li>
+                            <li className="flex items-start"><CheckCircle className="mr-2 mt-1 h-4 w-4 flex-shrink-0 text-green-500" /> Readers summarizing books</li>
+                        </ul>
                     </CardContent>
                 </Card>
                 <Card>
