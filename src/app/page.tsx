@@ -63,11 +63,16 @@ export default function Home() {
         }
         const fileBuffer = await pdfFile.arrayBuffer();
         const base64Pdf = Buffer.from(fileBuffer).toString('base64');
-        const pdfResult = await extractTextFromPdf({ pdf: base64Pdf });
+        const pdfDataUri = `data:application/pdf;base64,${base64Pdf}`;
+        const pdfResult = await extractTextFromPdf({ pdf: pdfDataUri });
         if (!pdfResult.text) {
           throw new Error("Could not extract text from the PDF.");
         }
         contentToProcess = pdfResult.text;
+      }
+
+      if (!contentToProcess.trim()) {
+        throw new Error("No meaningful content found to generate a cheat sheet. Please provide relevant text.");
       }
 
       const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
@@ -248,3 +253,5 @@ export default function Home() {
     </div>
   );
 }
+
+    

@@ -12,7 +12,7 @@ import { z } from 'genkit';
 import pdf from 'pdf-parse';
 
 const ExtractTextFromPdfInputSchema = z.object({
-  pdf: z.string().describe('The Base64 encoded PDF file.'),
+  pdf: z.string().describe("A PDF file encoded as a data URI. Expected format: 'data:application/pdf;base64,<encoded_data>'."),
 });
 export type ExtractTextFromPdfInput = z.infer<typeof ExtractTextFromPdfInputSchema>;
 
@@ -31,14 +31,26 @@ const extractTextFromPdfFlow = ai.defineFlow(
     inputSchema: ExtractTextFromPdfInputSchema,
     outputSchema: ExtractTextFromPdfOutputSchema,
   },
-  async ({ pdf: base64Pdf }) => {
+  async ({ pdf: pdfDataUri }) => {
     try {
-      const pdfBuffer = Buffer.from(base64Pdf, 'base64');
+      // Extract the base64 part of the data URI
+      const base64Data = pdfDataUri.split(',')[1];
+      if (!base64Data) {
+        throw new Error('Invalid PDF data URI: Missing base64 content.');
+      }
+      
+      const pdfBuffer = Buffer.from(base64Data, 'base64');
       const data = await pdf(pdfBuffer);
       return { text: data.text };
     } catch (error: any) {
       console.error('Error parsing PDF:', error);
-      throw new Error('Failed to parse the PDF file.');
+      // Provide a more specific error message if possible
+      const message = error.message.includes('Invalid PDF') 
+        ? 'The provided file does not appear to be a valid PDF.'
+        : 'Failed to parse the PDF file.';
+      throw new Error(message);
     }
   }
 );
+
+    
