@@ -48,8 +48,8 @@ const generateCheatSheetPrompt = ai.definePrompt({
       contentType: ContentType,
     }),
   },
-  output: {schema: z.string()},
-  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else. Do not return null or an empty string under any circumstance.
+  output: {schema: z.string().nullable()},
+  prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a valid, non-empty HTML string, and nothing else.
 
 Input:
 1. Raw text: {{{text}}}
@@ -83,19 +83,30 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     }
     const contentType = contentTypeResult.output.contentType;
 
-    const cheatSheetResult = await generateCheatSheetPrompt({
-      text: input.text,
-      contentType,
-    });
-    
-    if (!cheatSheetResult.output) {
-      // Even with the stronger prompt, have a fallback.
-      throw new Error('Failed to generate cheat sheet. The model returned an empty response.');
+    let cheatSheetHtml = '';
+    try {
+      const cheatSheetResult = await generateCheatSheetPrompt({
+        text: input.text,
+        contentType,
+      });
+      
+      if (!cheatSheetResult.output) {
+        throw new Error('The model returned an empty response for the cheat sheet.');
+      }
+      cheatSheetHtml = cheatSheetResult.output;
+
+    } catch (e) {
+      console.error(e);
+      // Instead of throwing, create a user-facing error message in HTML.
+      cheatSheetHtml = `<div class="p-4 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive">
+          <h3 class="font-bold">Generation Failed</h3>
+          <p>The AI model failed to generate a cheat sheet for this content. Please try again with different input.</p>
+        </div>`;
     }
 
     return {
       contentType: contentType,
-      cheatSheetHtml: cheatSheetResult.output,
+      cheatSheetHtml: cheatSheetHtml,
     };
   }
 );
