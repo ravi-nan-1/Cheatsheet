@@ -24,6 +24,7 @@ const ContentType = z.enum([
 
 const SummarizeContentAndGenerateCheatSheetInputSchema = z.object({
   text: z.string().describe('The content to summarize and generate a cheat sheet for.'),
+  targetLanguage: z.string().optional().describe('The target language for the cheat sheet output (e.g., "English", "Spanish"). Defaults to English.'),
 });
 export type SummarizeContentAndGenerateCheatSheetInput = z.infer<typeof SummarizeContentAndGenerateCheatSheetInputSchema>;
 
@@ -35,7 +36,7 @@ export type SummarizeContentAndGenerateCheatSheetOutput = z.infer<typeof Summari
 
 const detectContentTypePrompt = ai.definePrompt({
   name: 'detectContentTypePrompt',
-  input: {schema: SummarizeContentAndGenerateCheatSheetInputSchema},
+  input: {schema: z.object({ text: z.string() })},
   output: {schema: z.object({contentType: ContentType, reason: z.string()})},
   prompt: `Analyze the text and classify which subject it belongs to. Return only JSON:\n{\n "content_type": "...",\n "reason": "..."\n}\n\nText: {{{text}}}`,
 });
@@ -46,6 +47,7 @@ const generateCheatSheetPrompt = ai.definePrompt({
     schema: z.object({
       text: z.string(),
       contentType: ContentType,
+      targetLanguage: z.string().optional(),
     }),
   },
   output: {
@@ -54,6 +56,8 @@ const generateCheatSheetPrompt = ai.definePrompt({
     }),
   },
   prompt: `You are an AI specialized in creating subject-aware cheat sheets. Your output must be a JSON object with a single key, "cheatSheetHtml". The value must be a valid, non-empty HTML string. If you cannot generate a cheat sheet from the provided text, you MUST return a JSON object with the "cheatSheetHtml" key containing a single HTML div with an error message inside.
+
+Generate the cheat sheet in the following language: {{{targetLanguage}}}.
 
 Input:
 1. Raw text: {{{text}}}
@@ -81,7 +85,7 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     outputSchema: SummarizeContentAndGenerateCheatSheetOutputSchema,
   },
   async input => {
-    const contentTypeResult = await detectContentTypePrompt(input);
+    const contentTypeResult = await detectContentTypePrompt({ text: input.text });
     if (!contentTypeResult.output) {
       throw new Error('Failed to detect content type.');
     }
@@ -92,6 +96,7 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
       const cheatSheetResult = await generateCheatSheetPrompt({
         text: input.text,
         contentType,
+        targetLanguage: input.targetLanguage || 'English',
       });
 
       if (!cheatSheetResult.output?.cheatSheetHtml) {

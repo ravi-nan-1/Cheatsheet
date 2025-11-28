@@ -34,6 +34,10 @@ const enTranslations = {
       button: {
         generate: 'Generate Cheat Sheet',
       },
+      language: {
+        label: 'Cheat Sheet Language',
+        placeholder: 'Select a language',
+      }
     },
     viewer: {
       title: 'Generated Cheat Sheet',
@@ -159,6 +163,10 @@ const esTranslations = {
         button: {
           generate: 'Generar Hoja de Trucos',
         },
+        language: {
+          label: 'Idioma de la Hoja de Trucos',
+          placeholder: 'Selecciona un idioma',
+        }
       },
       viewer: {
         title: 'Hoja de Trucos Generada',
@@ -284,6 +292,10 @@ const frTranslations = {
       button: {
         generate: 'Générer une fiche de révision',
       },
+      language: {
+        label: 'Langue de la fiche de révision',
+        placeholder: 'Sélectionnez une langue',
+      }
     },
     viewer: {
       title: 'Fiche de révision générée',
@@ -409,6 +421,10 @@ const deTranslations = {
       button: {
         generate: 'Spickzettel generieren',
       },
+      language: {
+        label: 'Spickzettel-Sprache',
+        placeholder: 'Wählen Sie eine Sprache',
+      }
     },
     viewer: {
       title: 'Generierter Spickzettel',
@@ -534,6 +550,10 @@ const hiTranslations = {
       button: {
         generate: 'चीट शीट जेनरेट करें',
       },
+      language: {
+        label: 'चीट शीट भाषा',
+        placeholder: 'एक भाषा चुनें',
+      }
     },
     viewer: {
       title: 'जेनरेट की गई चीટ शीट',
@@ -659,6 +679,10 @@ const zhTranslations = {
       button: {
         generate: '生成备忘单',
       },
+      language: {
+        label: '备忘单语言',
+        placeholder: '选择一种语言',
+      }
     },
     viewer: {
       title: '生成的备忘单',

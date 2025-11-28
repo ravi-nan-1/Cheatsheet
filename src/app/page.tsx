@@ -10,13 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Sparkles, AlertCircle, Download, Share2, FileText, Link, Upload, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Logo } from '@/components/icons';
 import { CheatSheetSkeleton } from '@/components/cheat-sheet-skeleton';
 import { LanguageContext } from '@/context/language-context';
 import { LanguageSwitcher } from '@/components/language-switcher';
+import { languages, type Language } from '@/lib/translations';
 
 
 type CheatSheetResult = SummarizeContentAndGenerateCheatSheetOutput | null;
@@ -33,6 +34,8 @@ export default function Home() {
   const cheatSheetRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useContext(LanguageContext);
+  const [targetLanguage, setTargetLanguage] = useState<Language>('en');
+
 
   const handleGenerate = async () => {
     let contentToProcess = '';
@@ -73,7 +76,9 @@ export default function Home() {
         throw new Error(t('errors.noMeaningfulContent'));
       }
 
-      const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
+      const selectedLanguageName = languages.find(l => l.code === targetLanguage)?.name || 'English';
+
+      const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess, targetLanguage: selectedLanguageName });
        if (!result || !result.cheatSheetHtml) {
         throw new Error(t('errors.generationFailed'));
       }
@@ -226,6 +231,21 @@ export default function Home() {
                   </div>
                 </TabsContent>
               </Tabs>
+               <div className="mt-4 space-y-2">
+                 <label className="text-sm font-medium">{t('creator.language.label')}</label>
+                  <Select value={targetLanguage} onValueChange={(value) => setTargetLanguage(value as Language)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder={t('creator.language.placeholder')} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {languages.map((lang) => (
+                        <SelectItem key={lang.code} value={lang.code}>
+                          {lang.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+              </div>
             </CardContent>
             <CardFooter>
               <Button onClick={handleGenerate} disabled={isLoading} className="w-full" size="lg">
