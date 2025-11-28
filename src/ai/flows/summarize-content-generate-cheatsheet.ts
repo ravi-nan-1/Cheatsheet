@@ -89,11 +89,19 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     outputSchema: SummarizeContentAndGenerateCheatSheetOutputSchema,
   },
   async input => {
-    const contentTypeResult = await detectContentTypePrompt({ text: input.text });
-    if (!contentTypeResult.output) {
-      throw new Error('Failed to detect content type.');
+    let contentType: z.infer<typeof ContentType>;
+    try {
+        const contentTypeResult = await detectContentTypePrompt({ text: input.text });
+        if (!contentTypeResult.output) {
+          throw new Error('Failed to detect content type.');
+        }
+        contentType = contentTypeResult.output.contentType;
+    } catch (e) {
+        console.error("Error in content type detection:", e);
+        // Fallback to general if detection fails
+        contentType = 'general';
     }
-    const contentType = contentTypeResult.output.contentType;
+
 
     let cheatSheetHtml = '';
     try {
@@ -109,11 +117,11 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
       cheatSheetHtml = cheatSheetResult.output.cheatSheetHtml;
 
     } catch (e) {
-      console.error(e);
+      console.error("Error in cheat sheet generation:", e);
       // Instead of throwing, create a user-facing error message in HTML.
       cheatSheetHtml = `<div class="p-4 rounded-lg border border-destructive/50 bg-destructive/10 text-destructive">
           <h3 class="font-bold">Generation Failed</h3>
-          <p>The AI model failed to generate a cheat sheet for this content. Please try again with different input.</p>
+          <p>The AI model failed to generate a cheat sheet for this content. This could be due to network issues or content restrictions. Please try again with different input.</p>
         </div>`;
     }
 
