@@ -41,7 +41,12 @@ const extractTextFromPdfFlow = ai.defineFlow(
       
       const pdfBuffer = Buffer.from(base64Data, 'base64');
       const data = await pdf(pdfBuffer);
-      return { text: data.text };
+
+      // Clean up the extracted text
+      let text = data.text;
+      text = text.replace(/\s\s+/g, ' ').replace(/\n\s*\n/g, '\n').trim();
+
+      return { text };
     } catch (error: any) {
       console.error('Error parsing PDF:', error);
       // Provide a more specific error message if possible
@@ -52,5 +57,3 @@ const extractTextFromPdfFlow = ai.defineFlow(
     }
   }
 );
-
-    
