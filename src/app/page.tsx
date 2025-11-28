@@ -2,6 +2,8 @@
 
 import { useState, useRef } from 'react';
 import { summarizeContentAndGenerateCheatSheet, type SummarizeContentAndGenerateCheatSheetOutput } from '@/ai/flows/summarize-content-generate-cheatsheet';
+import { extractTextFromUrl } from '@/ai/flows/extract-text-from-url';
+import { extractTextFromPdf } from '@/ai/flows/extract-text-from-pdf';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -20,29 +22,55 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('text');
   const [inputText, setInputText] = useState('');
   const [url, setUrl] = useState('');
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cheatSheet, setCheatSheet] = useState<CheatSheetResult>(null);
   const { toast } = useToast();
   const cheatSheetRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleGenerate = async () => {
-    if (activeTab === 'text' && !inputText) {
-      toast({ variant: 'destructive', title: 'Input is empty', description: 'Please paste some text to generate a cheat sheet.' });
-      return;
-    }
-    // Note: URL and PDF are not implemented as per plan
-    if (activeTab !== 'text') {
-       toast({ variant: 'default', title: 'Feature coming soon!', description: 'URL and PDF inputs are not yet available.' });
-       return;
-    }
-
-    setIsLoading(true);
+    let contentToProcess = '';
     setError(null);
     setCheatSheet(null);
+    setIsLoading(true);
 
     try {
-      const result = await summarizeContentAndGenerateCheatSheet({ text: inputText });
+      if (activeTab === 'text') {
+        if (!inputText) {
+          toast({ variant: 'destructive', title: 'Input is empty', description: 'Please paste some text to generate a cheat sheet.' });
+          setIsLoading(false);
+          return;
+        }
+        contentToProcess = inputText;
+      } else if (activeTab === 'url') {
+        if (!url) {
+          toast({ variant: 'destructive', title: 'URL is empty', description: 'Please enter a URL to generate a cheat sheet.' });
+          setIsLoading(false);
+          return;
+        }
+        const urlResult = await extractTextFromUrl({ url });
+        if (!urlResult.text) {
+          throw new Error("Could not extract text from the URL. The page might be empty or protected.");
+        }
+        contentToProcess = urlResult.text;
+      } else if (activeTab === 'pdf') {
+        if (!pdfFile) {
+          toast({ variant: 'destructive', title: 'No PDF file selected', description: 'Please select a PDF file to generate a cheat sheet.' });
+          setIsLoading(false);
+          return;
+        }
+        const fileBuffer = await pdfFile.arrayBuffer();
+        const base64Pdf = Buffer.from(fileBuffer).toString('base64');
+        const pdfResult = await extractTextFromPdf({ pdf: base64Pdf });
+        if (!pdfResult.text) {
+          throw new Error("Could not extract text from the PDF.");
+        }
+        contentToProcess = pdfResult.text;
+      }
+
+      const result = await summarizeContentAndGenerateCheatSheet({ text: contentToProcess });
       setCheatSheet(result);
       toast({
         title: "Success!",
@@ -117,6 +145,17 @@ export default function Home() {
     });
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.type !== 'application/pdf') {
+        toast({ variant: 'destructive', title: 'Invalid File Type', description: 'Please upload a PDF file.' });
+        return;
+      }
+      setPdfFile(file);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background font-body flex flex-col">
       <header className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b bg-card">
@@ -151,16 +190,17 @@ export default function Home() {
                 <TabsContent value="url" className="mt-4 space-y-2">
                   <div className="flex items-center space-x-2">
                     <Input type="url" placeholder="https://example.com" value={url} onChange={e => setUrl(e.target.value)} />
-                    <Badge variant="outline">Coming Soon</Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">URL processing is under development.</p>
                 </TabsContent>
                 <TabsContent value="pdf" className="mt-4 space-y-2">
                   <div className="flex items-center space-x-2">
-                    <Input type="file" accept=".pdf" disabled />
-                    <Badge variant="outline">Coming Soon</Badge>
+                    <Input type="file" accept=".pdf" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+                    <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                      <Upload className="mr-2" />
+                      {pdfFile ? 'Change PDF' : 'Upload PDF'}
+                    </Button>
+                    {pdfFile && <span className="text-sm text-muted-foreground truncate">{pdfFile.name}</span>}
                   </div>
-                   <p className="text-xs text-muted-foreground">PDF uploads are under development.</p>
                 </TabsContent>
               </Tabs>
             </CardContent>
