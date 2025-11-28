@@ -39,7 +39,6 @@ const detectContentTypePrompt = ai.definePrompt({
   input: {
     schema: z.object({
       text: z.string(),
-      targetLanguage: z.string().optional(),
     }),
   },
   output: {schema: z.object({contentType: ContentType, reason: z.string()})},
@@ -90,7 +89,7 @@ const summarizeContentAndGenerateCheatSheetFlow = ai.defineFlow(
     outputSchema: SummarizeContentAndGenerateCheatSheetOutputSchema,
   },
   async input => {
-    const contentTypeResult = await detectContentTypePrompt(input);
+    const contentTypeResult = await detectContentTypePrompt({ text: input.text });
     if (!contentTypeResult.output) {
       throw new Error('Failed to detect content type.');
     }
